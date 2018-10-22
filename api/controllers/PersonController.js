@@ -112,5 +112,6 @@ module.exports = {
 
         return res.view('person/index', { persons: models });
     },
+    
 };
 
