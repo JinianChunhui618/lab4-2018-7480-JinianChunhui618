@@ -20,6 +20,21 @@ module.exports.bootstrap = async function (done) {
   //   return done();
   // }
   //
+  sails.bcrypt = require('bcryptjs');
+  const saltRounds = 10;
+
+  sails.getInvalidIdMsg = function (opts) {
+
+    if (opts.id && isNaN(parseInt(opts.id))) {
+      return "Primary key specfied is invalid (incorrect type).";
+    }
+
+    if (opts.fk && isNaN(parseInt(opts.fk))) {
+      return "Foreign key specfied is invalid (incorrect type).";
+    }
+
+    return null;        // falsy
+  }
 
   if (await Person.count() > 0) {
     return done();
@@ -36,9 +51,23 @@ module.exports.bootstrap = async function (done) {
   //   // etc.
   // ]);
   // ```
+  const hash = await sails.bcrypt.hash('123456', saltRounds);
+
+  await User.createEach([
+    { "username": "admin", "password": hash },
+    { "username": "boss", "password": hash }
+    // etc.
+  ]);
 
   // Don't forget to trigger `done()` when this bootstrap function's logic is finished.
   // (otherwise your server will never lift, since it's waiting on the bootstrap)
-  return done();
+  const martin = await Person.findOne({ name: "Martin Choy" });
+  const kenny = await Person.findOne({ name: "Kenny Cheng" });
+  const admin = await User.findOne({ username: "admin" });
+  const boss = await User.findOne({ username: "boss" });
 
+  await User.addToCollection(admin.id, 'supervises').members(kenny.id);
+  await User.addToCollection(boss.id, 'supervises').members([martin.id, kenny.id]);
+
+  return done();
 };

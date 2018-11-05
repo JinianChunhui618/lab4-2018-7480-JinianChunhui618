@@ -1,5 +1,5 @@
 /**
- * Person.js
+ * User.js
  *
  * @description :: A model definition.  Represents a database table/collection/etc.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
@@ -13,13 +13,14 @@ module.exports = {
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
 
-    name: {
+    username: {
       type: "string"
     },
 
-    age: {
-      type: "number"
+    password: {
+      type: "string"
     },
+
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
     //  ╚═╝╩ ╩╚═╝╚═╝═╩╝╚═╝
@@ -28,22 +29,17 @@ module.exports = {
     //  ╔═╗╔═╗╔═╗╔═╗╔═╗╦╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
     //  ╠═╣╚═╗╚═╗║ ║║  ║╠═╣ ║ ║║ ║║║║╚═╗
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
-    worksFor: {
-      collection: 'User',
-      via: 'supervises'
-    }
+    supervises: {
+      collection: 'Person',
+      via: 'worksFor'
+    },
 
   },
-  getInvalidIdMsg: function (opts) {
-
-    if (typeof opts.id === "undefined" || isNaN(parseInt(opts.id)))
-      return "Person id not specified or with incorrect type.";
-
-    if (isNaN(parseInt(opts.id)))
-      return "Person id with incorrect type"
-
-    return null;        // falsy
-
+  
+  customToJSON: function () {
+    // Return a shallow copy of this record with the password removed.
+    return _.omit(this, ['password'])
   },
+
 };
 
