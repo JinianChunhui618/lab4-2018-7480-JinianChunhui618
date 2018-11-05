@@ -14,13 +14,20 @@ module.exports = {
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
 
     username: {
-      type: "string"
+      type: "string",
+      unique: true,
+      required: true
     },
 
     password: {
       type: "string"
     },
 
+    role: {
+      type: 'string',
+      enum: ['admin', 'tester', 'visitor'],
+      defaultsTo: 'visitor'
+    },
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
     //  ╚═╝╩ ╩╚═╝╚═╝═╩╝╚═╝
@@ -35,7 +42,7 @@ module.exports = {
     },
 
   },
-  
+
   customToJSON: function () {
     // Return a shallow copy of this record with the password removed.
     return _.omit(this, ['password'])
